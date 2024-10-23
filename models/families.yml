@@ -1,0 +1,141 @@
+PF00014:
+  name: "PF00014"
+  long_name: "Trypsin inhibitor Kunitz domain"
+  alignment: "models/PF00014/PF00014_mgap6.fasta"
+  L: 53
+  weights: "models/PF00014/PF00014_mgap6_weights.csv"
+  notes: "ArDCA paper"
+  potts:
+    file: "models/PF00014/parameters_adaBM_PF00014.dat"
+    sample: ~
+    method: ~
+    equilibration_codons:
+      accepted: (Teq_steps = 5000, Hmax = 34)
+      changed: ~
+      proposed: ~
+    fgap: 0.75
+  profile:
+    file: "models/PF00014/parameters_profile_PF00014.dat"
+    sample: ~
+    pseudocount: 0.001
+PF00072:
+  name: "PF00072"
+  long_name: "Response regulator receiver domain"
+  alignment: "models/PF00072/PF00072_mgap6_subsample.fasta"
+  L: 112
+  weights: "models/PF00072/PF00072_mgap6_subsample_weights.csv"
+  notes: "ArDCA paper - subsample because original alignment very large"
+  potts:
+    file: "models/PF00072/parameters_dcatools_PF00072.dat"
+    sample: ~
+    method: "dcatools"
+    equilibration_codons:
+      accepted: (Teq_steps = 50000, Hmax = 83)
+      changed: ~
+      proposed: ~
+    fgap: 0.5
+  profile:
+    file: "models/PF00072/parameters_profile_PF00072.dat"
+    sample: ~
+    pseudocount: 0.001
+PF00076:
+  name: "PF00076"
+  long_name: "RNA recognition motif"
+  alignment: "models/PF00076/PF00076_mgap6.fasta"
+  L: 70
+  weights: "models/PF00076/PF00076_mgap6_weights.csv"
+  notes: "ArDCA paper"
+  potts:
+    file: "models/PF00076/parameters_adaBM_PF00076.dat"
+    sample: ~
+    method: "adabmdca"
+    equilibration_codons:
+      accepted: (Teq_steps = 5000, Hmax = 54)
+      changed: ~
+      proposed: ~
+    fgap: 0.9
+  profile:
+    file: "models/PF00076/parameters_profile_PF00076.dat"
+    sample: ~
+    pseudocount: 0.001
+PF00105:
+  name: "PF00105"
+  long_name: "DNA binding domain"
+  long_name_2: "Zinc finger C4 type"
+  alignment: "models/PF00105/DBD_alignment.uniref90.cov80.noX.a2m"
+  L: 76
+  weights: "models/PF00105/DBD_alignment_weights.uniref90.cov80.noX.csv"
+  notes: "EvoLeonardo"
+  potts:
+    file: "models/PF00105/Parameters_conv_Thr-PCD40.dat"
+    sample: ~
+    method: ~
+    equilibration_codons:
+      accepted: (Teq_steps = 50000, Hmax = 48)
+      changed: ~
+      proposed: ~
+    fgap: 0.95
+  profile:
+    file: "models/PF00105/parameters_profile_PF00105.dat"
+    sample: ~
+    pseudocount: 0.001
+PF00583:
+  name: "PF00583"
+  long_name: "Acetyltransferase"
+  alignment: "models/PF00583/PF00583_noinsert_max11gaps_nodupl_noclose_noX.faa"
+  L: 117
+  weights: "models/PF00583/PF00583_noinsert_max11gaps_nodupl_noclose_noX_weights.csv"
+  notes: "EvoLeonardo"
+  potts:
+    file: "models/PF00583/Parameters_conv_AAC6.dat"
+    sample: ~
+    method: ~
+    equilibration_codons:
+      accepted: (Teq_steps = 100000, Hmax = 94)
+      changed: ~
+      proposed: ~
+    fgap: 0.95
+  profile:
+    file: "models/PF00583/parameters_profile_PF00583.dat"
+    sample: ~
+    pseudocount: 0.001
+PF00595:
+  name: "PF00595"
+  long_name: "PDZ domain"
+  alignment: "models/PF00595/PF00595_mgap6.fasta"
+  notes: "ArDCA paper"
+  L: 82
+  weights: "models/PF00595/PF00595_mgap6_weights.csv"
+  potts:
+    file: "models/PF00595/parameters_adaBM_PF00595.dat"
+    sample: ~
+    method: "adabmdca"
+    equilibration_codons:
+      accepted: (Teq_steps = 3000, Hmax = 60)
+      changed: ~
+      proposed: ~
+    fgap: 0.9
+  profile:
+    file: "models/PF00595/parameters_profile_PF00595.dat"
+    sample: ~
+    pseudocount: 0.001
+PF01817:
+  name: "PF01817"
+  long_name: "Chorismate mutase type II"
+  alignment: "models/PF01817/CM_130530_MC_noX.fasta"
+  L: 96
+  weights: "models/PF01817/CM_130530_MC_noX_weights.csv"
+  notes: "EvoLeonardo - the HMM on interpro is of length 80, why?"
+  potts:
+    file: "models/PF01817/Parameters_conv_CM-PCD40.dat"
+    sample: ~
+    method: ~
+    equilibration_codons:
+      accepted: (Teq_steps = 1000000, Hmax = 75)
+      changed: ~
+      proposed: ~
+    fgap: 0.95
+  profile:
+    file: "models/PF01817/parameters_profile_PF01817.dat"
+    sample: ~
+    pseudocount: 0.001
