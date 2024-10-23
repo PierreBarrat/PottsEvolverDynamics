@@ -158,7 +158,9 @@ version = "0.1.5"
 
 [[deps.BioSequenceMappings]]
 deps = ["FASTX", "OneHotArrays", "Random"]
-path = "/home/pierrebc/Documents/julia/dev/BioSequenceMappings/"
+git-tree-sha1 = "a4d015eb8b009af2a0039cf8f64fc39d157c095a"
+repo-rev = "master"
+repo-url = "https://github.com/PierreBarrat/BioSequenceMappings.jl"
 uuid = "a84bc454-70cc-4f51-8a9d-ca76a5a82222"
 version = "0.1.3"
 
@@ -1270,7 +1272,9 @@ version = "1.4.3"
 
 [[deps.PottsEvolver]]
 deps = ["Accessors", "ArgCheck", "BioSequenceMappings", "LoggingExtras", "ProgressMeter", "Random", "StaticArrays", "StatsBase", "TreeTools", "UnPack"]
-path = "/home/pierrebc/Documents/julia/dev/PottsEvolver/"
+git-tree-sha1 = "1d7510a1fbb0bd3855b91650ba494deb8771a35d"
+repo-rev = "master"
+repo-url = "https://github.com/PierreBarrat/PottsEvolver.jl"
 uuid = "288ebb56-9d8a-405a-a2d6-6ed6f22c6052"
 version = "1.0.0-DEV"
 
