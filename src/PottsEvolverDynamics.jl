@@ -9,10 +9,14 @@ using Chain
 using DataStructures
 using DelimitedFiles
 using DrWatson
+using KernelDensity
+using Infiltrator
+using MultivariateStats
 using PottsEvolver
 using Plots
 using ProgressMeter
 using StatsBase
+using StatsPlots
 using YAML
 
 import DrWatson._wsave

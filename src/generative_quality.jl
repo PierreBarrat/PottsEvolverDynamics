@@ -75,11 +75,10 @@ function pairwise_hamming_histogram(
 )
     Hx = pairwise_hamming(X; step=step_X, kwargs...)
     Hy = pairwise_hamming(Y; step=step_Y, kwargs...)
-
     L = size(X, 1)
-    p = plot()
+    hvals, w1, w2 = _shared_histogram(Hx, Hy, 2/L)
 
-    hvals, w1, w2 = _my_histogram(Hx, Hy, 2/L)
+    p = plot()
     plot!(p, hvals, w1, label=label_X)
     plot!(p, hvals, w2, label=label_Y)
 
@@ -90,7 +89,83 @@ function pairwise_hamming_histogram(
     return p
 end
 
-function _my_histogram(H1, H2, binwidth)
+function energy_histogram(
+    X::Alignment, Y::Alignment, potts::PottsGraph;
+    label_X = "", label_Y = "", kwargs...
+)
+    potts = deepcopy(potts)
+    PottsEvolver.set_gauge!(potts, :zero_sum)
+    Ex = map(s -> energy(s, potts), X)
+    Ey = map(s -> energy(s, potts), Y)
+
+    Evals, w1, w2 = _shared_histogram(Ex, Ey)
+    p = plot()
+    plot!(p, Evals, w1, label=label_X)
+    plot!(p, Evals, w2, label=label_Y)
+
+    plot!(xlabel = "Energy", title = "Energy distribution", yscale = :log10)
+    plot!(legend = :topright)
+    plot!(; kwargs...)
+
+    return p
+end
+
+function frobnorm_histogram(potts::PottsGraph; kwargs...)
+    frob(J) = sum(x -> x^2, J)
+    (; L, q) = size(potts)
+    F = zeros(Float64, Int(L*(L-1)/2))
+    k = 1
+    for i in 1:L, j in (i+1):L
+        F[k] = frob(potts.J[:, :, j, i])
+        k += 1
+    end
+
+    fvals, w = _histogram(F)
+    p = plot(fvals, w, label="")
+    plot!(p, xlabel="Frobenius norm", title="Distribution of |J|^2")
+    plot!(p; kwargs...)
+    return p
+end
+
+function pca(X::Alignment, Y::Alignment)
+    q = length(X.alphabet)
+    L = size(X,1)
+
+    X_01 = reshape(BioSequenceMappings.onehot(X).data, q*L, size(X,2))
+    Y_01 = reshape(BioSequenceMappings.onehot(Y).data, q*L, size(Y,2))
+
+    pca_components = fit(PCA, X_01, maxoutdim=2)
+
+    proj_X = predict(pca_components, X_01)
+    proj_Y = predict(pca_components, Y_01)
+
+    p = plot()
+
+    # Y with markers
+    x, y = proj_Y[1,:], proj_Y[2,:]
+    scatter!(p, x, y, marker=(2, 0.3, stroke(0), :blue), label="Potts")
+
+    # X with a contour plot
+    x, y = proj_X[1,:], proj_X[2,:]
+    k = kde((x, y))
+    contour!(p, k, c = :Reds, linewidth = 3, levels=6, label="Natural")
+
+    plot!(xlabel = "PC1", ylabel = "PC2")
+    return p
+end
+
+function _histogram(H, binwidth = auto_bindwidth(H))
+    low, high = extrema(H)
+    edges = collect(range(low, high, step=binwidth))
+    xvals = (edges[1:end-1] + edges[2:end])/2
+
+    w = fit(Histogram, H, edges).weights
+    w = w / sum(w) / binwidth
+
+    return xvals, w
+end
+
+function _shared_histogram(H1, H2, binwidth=auto_bindwidth(H1, H2))
     hmin = min(minimum(H1), minimum(H2))
     hmax = max(maximum(H1), maximum(H2))
     hedges = collect(range(hmin, hmax, step=binwidth))
@@ -111,3 +186,9 @@ function _my_histogram(H1, H2, binwidth)
 
     return hvals, w1, w2
 end
+
+function auto_bindwidth(X::AbstractVector, Y::AbstractVector, n=50)
+    low, high = (min(minimum(X), minimum(Y)), max(maximum(X), maximum(Y)))
+    return (high - low) / n
+end
+auto_bindwidth(X, n=50) = (maximum(X) - minimum(X))/n

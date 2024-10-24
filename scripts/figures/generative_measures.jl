@@ -2,7 +2,9 @@ using DrWatson
 @quickactivate "PottsEvolverDynamics"
 
 using BioSequenceMappings
+using Chain
 using DelimitedFiles
+using Infiltrator
 using Measures
 using Plots
 using PottsEvolver
@@ -13,9 +15,14 @@ include(joinpath(homedir(), ".julia/config/plot_defaults.jl"))
 Plots.default(; pubfig(24)...)
 
 families = keys(PED.ref_families)
+# families = ["PF00105"]
+# families = ["PF00014"]
 
 for fam in families
     @info fam
+    #==========================================#
+    ############### Prior checks ###############
+    #==========================================#
 
     # check files are all here
     aln_naturals = PED.ref_families[fam]["alignment"]
@@ -36,7 +43,7 @@ for fam in families
     end
 
     if !isdir(datadir("equilibrium_samples", fam))
-        @error"No sample for $fam - looked for $(datadir("equilibrium_samples", fam))"
+        @error"No sample for $fam - looked for $(datadir(\"equilibrium_samples\", fam))"
         continue
     end
     expr = Regex("$(fam)_eqsample_id=([0-9]+)\\.fasta")
@@ -51,7 +58,7 @@ for fam in families
         """
         continue
     elseif length(aln_sampled) == 0
-        @error"No sample for $fam - looked in $(datadir("equilibrium_samples", fam))"
+        @error"No sample for $fam - looked in $(datadir(\"equilibrium_samples\", fam))"
         continue
     else
         (
@@ -59,6 +66,17 @@ for fam in families
             parse(UInt, match(expr, first(aln_sampled)).captures[1])
         )
     end
+
+    #====================================#
+    ############# For saving #############
+    #====================================#
+
+    savedir = plotsdir("generative", fam)
+    mkpath(savedir)
+
+    #=====================#
+    ######## Plots ########
+    #=====================#
 
     shared_title = "$fam - $(PED.ref_families[fam]["long_name"])"
 
@@ -72,16 +90,41 @@ for fam in families
     plot!(plt_corr, xlabel = "Naturals", ylabel = "Potts")
     plot!(plt_corr, title = "$(shared_title)\n Connected correlations")
 
+    savefig(plt_f1, joinpath(savedir, "$(fam)_fit_f1_id$(id).png"))
+    savefig(plt_corr, joinpath(savedir, "$(fam)_fit_corr_id$(id).png"))
+
     # pairwise hamming
     plt_hamming = PED.pairwise_hamming_histogram(
         aln_naturals, aln_sampled; label_X = "Natural", label_Y = "Potts",
     )
     plot!(plt_hamming, title = "$(shared_title)\n Pairwise hamming distances")
-
-    # saving
-    savedir = plotsdir("generative", fam)
-    mkpath(savedir)
-    savefig(plt_f1, joinpath(savedir, "$(fam)_fit_f1_id$(id).png"))
-    savefig(plt_corr, joinpath(savedir, "$(fam)_fit_corr_id$(id).png"))
     savefig(plt_hamming, joinpath(savedir, "$(fam)_pw_hamming_id$(id).png"))
+
+    # Energy distribution
+    plt_energy = PED.energy_histogram(
+        aln_naturals, aln_sampled, potts; label_X = "Natural", label_Y = "Potts",
+    )
+    plot!(plt_energy, title = "$(shared_title)\n Energy distribution")
+    savefig(plt_energy, joinpath(savedir, "$(fam)_energy_id$(id).png"))
+
+    # Frobenius norm distribution
+    plt_frob = PED.frobnorm_histogram(potts)
+    plot!(plt_frob, title = "$(shared_title)\n Frobenius norm distribution")
+    savefig(plt_frob, joinpath(savedir, "$(fam)_frobenius_id$(id).png"))
+
+    # PCA
+    plt_pca = PED.pca(aln_naturals, aln_sampled)
+    plot!(plt_pca, title = "$(shared_title)\n PCA", margin=10mm)
+    savefig(plt_pca, joinpath(savedir, "$(fam)_pca_id$(id).png"))
+
+    ## Extra plots if useful
+    # #= pairwise hamming excluding gaps =#
+    # alphabet = aln_naturals.alphabet
+    # gap_integer = findfirst(i -> alphabet(i) == '-', 1:length(alphabet))
+    # plt_hamming_nogaps = PED.pairwise_hamming_histogram(
+    #     aln_naturals, aln_sampled;
+    #     label_X = "Natural", label_Y = "Potts", exclude_state = gap_integer,
+    # )
+    # plot!(plt_hamming_nogaps, title = "$(shared_title)\n Pairwise hamming distances - ignore gaps")
+    # savefig(plt_hamming_nogaps, joinpath(savedir, "$(fam)_pw_hamming_nogaps_id$(id).png"))
 end
